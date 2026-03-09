@@ -32,5 +32,7 @@ Deployment: Vercel and Render
 Version Control: GitHub
 
 ### **Favorite Quotes**
-"I am  no man." - Eowyn (Lord of the Rings)
+
+"I am no man." - Eowyn (Lord of the Rings)
+
 "It's no use going back to yesterday because I was a different person then." — Alice (Alice's Adventures in Wonderland)
