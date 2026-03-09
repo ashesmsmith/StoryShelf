@@ -5,31 +5,30 @@
 ### **Contributors**
 
 Ashley Smith  
-Ricardo Ramos  
-Erick Orellana  
+Ricardo Ramos   
 Beatriz Miranda
 
 ### **Purpose**
 
-Provide a full-stack web application allowing bookstores to manage inventory using ISBN scanning to track inventory levels, add/edit book details, and publish to online storefront for customers to order from.
+Provide a full-stack web application allowing bookstores to manage inventory using ISBN scanning to track inventory, add/edit book details, and publish to online storefront for customers to order from.
 
 ### **Features**
 
-- Add books to inventory using ISBN barcode scanning
-- Manual entry and editing option
-- Real-time stock level tracking
-- Role-based login for employee/admin/customer
-- Online storefront with checkout ability
-- Order Tracking
-- Order History
+- Role-based login for admin/employee/customer
+- Add books to inventory using ISBN barcode
+- Manual entry and editing options for book details
+- Inventory management options
+- Online storefront with checkout ability for customers
+- viewable Order History for customers
 
 ### **Technology**
 
-Frontend: React, React Router, CSS, API  
-Backend: Node.js, Express.js, RESTful API  
+Frontend: Next.js, CSS
+Backend: Next.js API Routes
 Database: PostgreSQL  
-Deployment: Vercel and Render  
+Deployment: Vercel  
 Version Control: GitHub
+External APIs: Google Books API
 
 ### **Favorite Quotes**
 
