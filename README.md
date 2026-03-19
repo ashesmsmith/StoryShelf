@@ -230,3 +230,5 @@ At that point:
 * Confirm username/password
 * Confirm port is 5432
 * Restart PostgreSQL service if needed
+
+  ####
