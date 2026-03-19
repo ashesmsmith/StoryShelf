@@ -84,46 +84,6 @@ function getCategoryName(categoryId: number) {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#f4f5f2] text-[#2f3e46]">
-      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="StoryShelf logo"
-            width={180}
-            height={60}
-            priority
-          />
-        </div>
-
-        <nav className="hidden gap-8 text-sm font-medium md:flex">
-          <a href="#categories" className="transition hover:text-[#52796f]">
-            Categories
-          </a>
-          <a href="#featured" className="transition hover:text-[#52796f]">
-            Featured
-          </a>
-          <a href="#about" className="transition hover:text-[#52796f]">
-            About
-          </a>
-        </nav>
-
-        <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href="/login"
-            className="rounded-full border border-[#354f52] px-5 py-2.5 text-sm font-semibold text-[#354f52] transition hover:bg-[#354f52] hover:text-white"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-full bg-[#2f3e46] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-          >
-            Create Account
-          </Link>
-        </div>
-      </header>
-
       <main>
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 md:grid-cols-2 md:items-center md:py-20">
           <div>
@@ -384,27 +344,5 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-[#52796f] md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="font-semibold text-[#2f3e46]">StoryShelf</p>
-          <p>Inventory Tracking & E-Commerce</p>
-        </div>
-
-        <div className="flex flex-wrap gap-4">
-          <Link href="/books" className="hover:text-[#2f3e46]">
-            Books
-          </Link>
-          <Link href="/login" className="hover:text-[#2f3e46]">
-            Login
-          </Link>
-          <Link href="/register" className="hover:text-[#2f3e46]">
-            Register
-          </Link>
-          <Link href="/employee/login" className="hover:text-[#2f3e46]">
-            Employee Area
-          </Link>
-        </div>
-      </footer>
-    </div>
   );
 }
