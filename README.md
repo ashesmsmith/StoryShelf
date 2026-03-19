@@ -76,3 +76,157 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+# Local Database Setup (Development Only)
+
+This project uses a **local PostgreSQL database** during development. Each team member will run their own database instance until we migrate to a shared cloud database (Neon/Vercel) later in the project.
+
+---
+
+## Prerequisites
+
+Make sure you have the following installed:
+
+* PostgreSQL
+* pgAdmin 4 (or another PostgreSQL GUI)
+* Node.js and npm
+
+---
+
+## 1. Create a Local Database
+
+1. Open pgAdmin 4
+2. Connect to your local PostgreSQL server
+3. Right-click **Databases → Create → Database…**
+4. Enter the following:
+
+```
+Database Name: bookstore_db
+Owner: postgres (default)
+```
+
+5. Click **Save**
+
+---
+
+## 2. Configure Environment Variables
+
+Create a `.env` file in the root of the project (if it does not already exist):
+
+```
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/bookstore_db"
+```
+
+Replace `YOUR_PASSWORD` with your PostgreSQL password.
+
+> ⚠️ Do NOT commit `.env` files to version control.
+
+---
+
+## 3. Run Database Migrations
+
+Run the following command to create the database tables:
+
+```
+npx prisma migrate dev --name init
+```
+
+This will:
+
+* Create all tables based on the Prisma schema
+* Generate the Prisma client
+
+---
+
+## 4. Start the Development Server
+
+```
+npm run dev
+```
+
+Then open:
+
+```
+http://localhost:3000/dashboard
+```
+
+You should see:
+
+```
+Books in DB: 0
+```
+
+---
+
+## 5. Development Workflow
+
+* Each developer has their **own local database**
+* Data is **not shared between team members**
+* The database schema is shared through Prisma migrations
+
+---
+
+## 6. Updating the Database Schema
+
+When changes are made to `schema.prisma`:
+
+### If you made the change:
+
+```
+npx prisma migrate dev --name <change-name>
+```
+
+### If pulling changes from GitHub:
+
+```
+npx prisma migrate dev
+```
+
+---
+
+## 7. Important Notes
+
+* Do not edit the database manually unless necessary
+* Always pull the latest changes before running migrations
+* Only one person should modify the schema at a time to avoid conflicts
+
+---
+
+## 8. Future Deployment
+
+In later sprints, we will switch to a shared hosted database using Neon and deploy the application using Vercel.
+
+At that point:
+
+* All developers will use the same `DATABASE_URL`
+* Data will be shared across the team
+
+---
+
+## Troubleshooting
+
+### pgAdmin shows no servers
+
+* Ensure PostgreSQL is installed
+* Register a new server in pgAdmin using:
+
+  * Host: localhost
+  * Port: 5432
+  * Username: postgres
+
+---
+
+### Migration fails
+
+* Check your `DATABASE_URL`
+* Ensure PostgreSQL is running
+* Verify the database exists
+
+---
+
+### Cannot connect to database
+
+* Confirm username/password
+* Confirm port is 5432
+* Restart PostgreSQL service if needed
