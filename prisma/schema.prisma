@@ -24,11 +24,16 @@ model Book {
   author      String
   description String?
   imageURL    String?
-  categories  String[]
   price       Float
   inventory   Inventory?
-  isFeatured  Boolean    @default(false) // for homepage featured books
-  slug        String?    @unique        // for SEO-friendly URLs
+  isFeatured  Boolean    @default(false)
+  slug        String?    @unique
+
+  categories  BookCategory[] // Many-to-many relation
+
+  orderItems  OrderItem[]   // Relation to OrderItem
+
+  @@index([slug])
 }
 
 model Inventory {
@@ -36,12 +41,28 @@ model Inventory {
   bookId   Int  @unique
   quantity Int
   book     Book @relation(fields: [bookId], references: [id])
+  
+  @@index([bookId])
 }
 
 model Category {
   id    Int    @id @default(autoincrement())
   name  String
-  slug  String @unique    // used for /books?category=slug links
+  slug  String @unique
+
+  books BookCategory[] // Many-to-many relation
+}
+
+model BookCategory {
+  bookId     Int
+  categoryId Int
+
+  book      Book     @relation(fields: [bookId], references: [id])
+  category  Category @relation(fields: [categoryId], references: [id])
+
+  @@id([bookId, categoryId])
+  @@index([bookId])
+  @@index([categoryId])
 }
 
 model Order {
@@ -50,8 +71,11 @@ model Order {
   total     Float
   status    String
   createdAt DateTime    @default(now())
+  
   items     OrderItem[]
   user      User        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model OrderItem {
@@ -60,5 +84,10 @@ model OrderItem {
   bookId   Int
   quantity Int
   price    Float
+
   order    Order @relation(fields: [orderId], references: [id])
+  book     Book  @relation(fields: [bookId], references: [id])
+
+  @@index([orderId])
+  @@index([bookId])
 }
