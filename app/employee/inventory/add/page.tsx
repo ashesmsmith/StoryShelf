@@ -44,11 +44,11 @@ export default function AddBookPage() {
 
     // Format published date for input (if it's in YYYY or YYYY-MM-DD format)
     const formattedDate =
-    googleBook?.publishedDate && googleBook.publishedDate.length === 10
-    ? googleBook.publishedDate
-    : googleBook?.publishedDate && googleBook.publishedDate.length === 4
-    ? `${googleBook.publishedDate}-01-01`
-    : '';
+        googleBook?.publishedDate && googleBook.publishedDate.length === 10
+            ? googleBook.publishedDate
+            : googleBook?.publishedDate && googleBook.publishedDate.length === 4
+              ? `${googleBook.publishedDate}-01-01`
+              : '';
 
     return (
         <main className="mx-auto max-w-3xl px-6 py-12">
