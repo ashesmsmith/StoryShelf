@@ -206,13 +206,12 @@ export default function Home() {
 
             <div className="mt-5 rounded-2xl bg-[#2f3e46] p-6 text-white">
               <h2 className="text-xl font-semibold">
-                PostgreSQL-ready structure
+                     Structured Data Model
               </h2>
               <ul className="mt-4 space-y-3 text-sm text-white/90">
-                <li>Books linked to categories by categoryId</li>
-                <li>Stock stored as stockQuantity</li>
-                <li>Prices stored as numbers</li>
-                <li>Prepared for API Routes and relational queries</li>
+                <li>Books, users, and inventory are structured using relational models.</li>
+                <li>Each book is linked to categories, stock is tracked through quantity fields,</li>
+                <li>and pricing is stored as numeric values to support accurate calculations and reporting.</li>
               </ul>
             </div>
           </div>
