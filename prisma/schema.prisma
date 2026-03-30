@@ -1,15 +1,97 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id          Int        @id @default(autoincrement())
+  isbn        String     @unique
+  title       String
+  author      String
+  description String?
+  imageURL    String?
+  price       Float
+  inventory   Inventory?
+  isFeatured  Boolean    @default(false)
+  slug        String?    @unique
+
+  pageCount    Int?      
+  printType    String?   
+  publisher    String?   
+  publishedDate DateTime? 
+
+  categories  BookCategory[] // Many-to-many relation
+  orderItems  OrderItem[]   // Relation to OrderItem
+
+  @@index([slug])
+}
+
+model Inventory {
+  id       Int  @id @default(autoincrement())
+  bookId   Int  @unique
+  quantity Int
+  book     Book @relation(fields: [bookId], references: [id])
+
+  @@index([bookId])
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  slug  String @unique
+
+  books BookCategory[] // Many-to-many relation
+}
+
+model BookCategory {
+  bookId     Int
+  categoryId Int
+
+  book      Book     @relation(fields: [bookId], references: [id])
+  category  Category @relation(fields: [categoryId], references: [id])
+
+  @@id([bookId, categoryId])
+  @@index([bookId])
+  @@index([categoryId])
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  total     Float
+  status    String
+  createdAt DateTime    @default(now())
+
+  items     OrderItem[]
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id       Int   @id @default(autoincrement())
+  orderId  Int
+  bookId   Int
+  quantity Int
+  price    Float
+
+  order    Order @relation(fields: [orderId], references: [id])
+  book     Book  @relation(fields: [bookId], references: [id])
+
+  @@index([orderId])
+  @@index([bookId])
 }
