@@ -14,134 +14,144 @@ type GoogleBook = {
     categories?: string[];
     publisher?: string;
     publishedDate?: string;
-    imageLinks?: {
-        thumbnail?: string;
-    };
+    imageLinks?: { thumbnail?: string };
 };
 
 export default function AddBookPage() {
     const [query, setQuery] = useState('');
-    const [googleBook, setGoogleBook] = useState<GoogleBook | null>(null);
+    const [searchResults, setSearchResults] = useState<GoogleBook[]>([]);
+    const [selectedBook, setSelectedBook] = useState<GoogleBook | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Client-side search handler
+    // Handle search button click
     const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!query) return;
-
         setLoading(true);
+
         try {
             const res = await fetch(`/api/googleBooks?query=${encodeURIComponent(query)}`);
-            const data: GoogleBook | null = await res.json();
-            console.log('Google Books API response:', data);
-            setGoogleBook(data || null);
+            const data = await res.json();
+            setSearchResults(data.items || []);
+            setSelectedBook(null); // reset previous selection
         } catch (err) {
-            console.error('Error fetching book:', err);
-            setGoogleBook(null);
+            console.error(err);
+            setSearchResults([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Format published date for <input type="date">
+    // Fill form when user selects a book
+    const handleSelectBook = (book: GoogleBook) => {
+        setSelectedBook(book);
+        setSearchResults([]); // hide search results
+    };
+
+    // Format date for <input type="date">
     const formattedDate =
-        googleBook?.publishedDate && googleBook.publishedDate.length === 10
-            ? googleBook.publishedDate
-            : googleBook?.publishedDate && googleBook.publishedDate.length === 4
-              ? `${googleBook.publishedDate}-01-01`
+        selectedBook?.publishedDate && selectedBook.publishedDate.length === 10
+            ? selectedBook.publishedDate
+            : selectedBook?.publishedDate && selectedBook.publishedDate.length === 4
+              ? `${selectedBook.publishedDate}-01-01`
               : '';
 
-    // Combine categories into comma-separated string for input
-    const prefillCategories = googleBook?.categories?.join(', ') || '';
+    const prefillCategories = selectedBook?.categories?.join(', ') || '';
 
-    // Normalize printType for <select>
     const normalizedPrintType = (() => {
-        const pt = googleBook?.printType?.toUpperCase() || '';
+        const pt = selectedBook?.printType?.toUpperCase() || '';
         if (pt === 'HARDCOVER') return 'HARDCOVER';
         if (pt === 'PAPERBACK') return 'PAPERBACK';
-        return ''; // default fallback
+        return '';
     })();
 
     return (
         <main className="mx-auto max-w-3xl px-6 py-12">
-            {/* Header */}
             <div className="mb-10">
                 <h1 className="mt-4 text-3xl font-bold text-[#2f3e46]">Add to Inventory</h1>
                 <p className="mt-2 text-[#52796f]">Search or manually enter book details</p>
             </div>
 
-            {/* Google Books Search */}
-            <form onSubmit={handleSearch} className="mb-8 flex gap-3">
+            {/* Search Form */}
+            <form onSubmit={handleSearch} className="mb-4 flex gap-3 relative">
                 <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    name="query"
                     placeholder="Search by title or ISBN"
                     className="w-full rounded-xl border border-[#cad2c5] px-4 py-3"
                 />
                 <button type="submit" className="rounded-xl bg-[#52796f] px-5 py-3 text-white">
                     {loading ? 'Searching...' : 'Search'}
                 </button>
+
+                {/* Search Results Dropdown */}
+                {searchResults.length > 0 && (
+                    <ul className="absolute top-full left-0 z-10 max-h-60 w-full overflow-auto rounded-xl border border-[#cad2c5] bg-white shadow-lg">
+                        {searchResults.map((book, index) => (
+                            <li
+                                key={index}
+                                className="cursor-pointer px-4 py-2 hover:bg-[#f0f4f3]"
+                                onClick={() => handleSelectBook(book)}
+                            >
+                                {book.title} {book.authors ? `- ${book.authors.join(', ')}` : ''}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </form>
 
             {/* Book Cover */}
             <div className="relative h-40 w-28 mx-auto mb-6">
                 <BookImage
-                    src={googleBook?.imageLinks?.thumbnail || '/book_placeholder.png'}
-                    alt={googleBook?.title || 'Book cover'}
+                    src={selectedBook?.imageLinks?.thumbnail || '/book_placeholder.png'}
+                    alt={selectedBook?.title || 'Book cover'}
                 />
             </div>
 
             {/* Book Form */}
             <div className="rounded-3xl border border-[#cad2c5] bg-white p-8 shadow-sm">
                 <form action={createBook} className="flex flex-col gap-6">
-                    {/* ISBN (read-only) */}
                     <label>ISBN</label>
                     <input
                         name="isbn"
-                        defaultValue={googleBook?.isbn || ''}
+                        defaultValue={selectedBook?.isbn || ''}
                         readOnly
                         className="rounded-xl border border-[#cad2c5] px-4 py-3 bg-[#f0f0f0]"
                     />
 
-                    {/* Title */}
                     <label>Title</label>
                     <input
                         name="title"
+                        defaultValue={selectedBook?.title || ''}
                         placeholder="Title"
-                        defaultValue={googleBook?.title || ''}
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Author */}
                     <label>Author</label>
                     <input
                         name="author"
+                        defaultValue={selectedBook?.authors?.[0] || ''}
                         placeholder="Author"
-                        defaultValue={googleBook?.authors?.[0] || ''}
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Description */}
                     <label>Description</label>
                     <textarea
                         name="description"
+                        defaultValue={selectedBook?.description || ''}
                         placeholder="Description"
-                        defaultValue={googleBook?.description || ''}
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Page Count */}
                     <label>Page Count</label>
                     <input
                         name="pageCount"
                         type="number"
+                        defaultValue={selectedBook?.pageCount || ''}
                         placeholder="Length (pages)"
-                        defaultValue={googleBook?.pageCount || ''}
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Print Type */}
                     <label>Print Type</label>
                     <select
                         name="printType"
@@ -153,25 +163,22 @@ export default function AddBookPage() {
                         <option value="PAPERBACK">Paperback</option>
                     </select>
 
-                    {/* Categories */}
                     <label>Categories</label>
                     <input
                         name="categories"
-                        placeholder="Categories (comma separated)"
                         defaultValue={prefillCategories}
+                        placeholder="Categories (comma separated)"
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Publisher */}
                     <label>Publisher</label>
                     <input
                         name="publisher"
-                        placeholder="Publishing Company"
-                        defaultValue={googleBook?.publisher || ''}
+                        defaultValue={selectedBook?.publisher || ''}
+                        placeholder="Publisher"
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Published Date */}
                     <label>Published Date</label>
                     <input
                         name="publishedDate"
@@ -180,7 +187,6 @@ export default function AddBookPage() {
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Price */}
                     <label>Price*</label>
                     <input
                         name="price"
@@ -192,7 +198,6 @@ export default function AddBookPage() {
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Stock Quantity */}
                     <label>Stock Quantity*</label>
                     <input
                         name="stockQuantity"
@@ -203,7 +208,6 @@ export default function AddBookPage() {
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     />
 
-                    {/* Submit */}
                     <button className="rounded-xl bg-[#2f3e46] px-6 py-3 text-white">
                         Save Book
                     </button>

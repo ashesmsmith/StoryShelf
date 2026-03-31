@@ -1,32 +1,32 @@
-import { NextResponse } from "next/server";
-import prisma from "@/app/lib/prisma";
-import { hashPassword } from "@/app/lib/auth";
+import { NextResponse } from 'next/server';
+import prisma from '@/app/lib/prisma';
+import { hashPassword } from '@/app/lib/auth';
 
 export async function POST(req: Request) {
-  const { name, email, password } = await req.json();
+    const { name, email, password } = await req.json();
 
-  if (!name || !email || !password) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
+    if (!name || !email || !password) {
+        return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    }
 
-  const existing = await prisma.user.findUnique({
-    where: { email },
-  });
+    const existing = await prisma.user.findUnique({
+        where: { email },
+    });
 
-  if (existing) {
-    return NextResponse.json({ error: "User already exists" }, { status: 400 });
-  }
+    if (existing) {
+        return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+    }
 
-  const hashed = await hashPassword(password);
+    const hashed = await hashPassword(password);
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashed,
-      role: "employee", 
-    },
-  });
+    const user = await prisma.user.create({
+        data: {
+            name,
+            email,
+            password: hashed,
+            role: 'employee',
+        },
+    });
 
-  return NextResponse.json({ message: "User created", user });
+    return NextResponse.json({ message: 'User created', user });
 }

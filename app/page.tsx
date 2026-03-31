@@ -162,18 +162,24 @@ export default function Home() {
                         </form>
                     </div>
 
-            <div className="mt-5 rounded-2xl bg-[#2f3e46] p-6 text-white">
-              <h2 className="text-xl font-semibold">
-                     Structured Data Model
-              </h2>
-              <ul className="mt-4 space-y-3 text-sm text-white/90">
-                <li>Books, users, and inventory are structured using relational models.</li>
-                <li>Each book is linked to categories, stock is tracked through quantity fields,</li>
-                <li>and pricing is stored as numeric values to support accurate calculations and reporting.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
+                    <div className="mt-5 rounded-2xl bg-[#2f3e46] p-6 text-white">
+                        <h2 className="text-xl font-semibold">Structured Data Model</h2>
+                        <ul className="mt-4 space-y-3 text-sm text-white/90">
+                            <li>
+                                Books, users, and inventory are structured using relational models.
+                            </li>
+                            <li>
+                                Each book is linked to categories, stock is tracked through quantity
+                                fields,
+                            </li>
+                            <li>
+                                and pricing is stored as numeric values to support accurate
+                                calculations and reporting.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
             <section id="categories" className="mx-auto max-w-7xl px-6 py-8 md:py-14">
                 <div className="mb-8">

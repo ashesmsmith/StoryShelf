@@ -4,8 +4,9 @@ type IndustryIdentifier = {
     type: string;
     identifier: string;
 };
+
 type GoogleBook = {
-     isbn?: string;
+    isbn?: string;
     title?: string;
     authors?: string[];
     description?: string;
@@ -17,7 +18,23 @@ type GoogleBook = {
     imageLinks?: {
         thumbnail?: string;
     };
-}
+};
+
+type GoogleAPIItem = {
+    volumeInfo: {
+        title?: string;
+        authors?: string[];
+        description?: string;
+        pageCount?: number;
+        printType?: string;
+        categories?: string[];
+        publisher?: string;
+        publishedDate?: string;
+        imageLinks?: { thumbnail?: string };
+        industryIdentifiers?: IndustryIdentifier[];
+    };
+};
+
 type GoogleBookAPIResponse = {
     items: GoogleBook[];
     totalItems: number;
@@ -29,7 +46,7 @@ type GoogleBookAPIResponse = {
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     let query = searchParams.get('query')?.trim() || '';
-    const page = parseInt(searchParams.get('page') || '1');  
+    const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const API_KEY = process.env.GOOGLE_BOOKS_API_KEY;
 
@@ -42,14 +59,14 @@ export async function GET(req: NextRequest) {
         query = `isbn:${query.replace(/-/g, '')}`;
     }
 
-    const startIndex = (page - 1) * limit;
     try {
+        const startIndex = (page - 1) * limit;
         const res = await fetch(
-            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${API_KEY}`
+            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${API_KEY}&startIndex=${startIndex}&maxResults=${limit}`
         );
+        const data: { items?: GoogleAPIItem[]; totalItems?: number } = await res.json();
 
-        const data = await res.json();
-        const items: GoogleBook[] = (data.items || []).map((item: any) => {
+        const items: GoogleBook[] = (data.items || []).map((item) => {
             const volumeInfo = item.volumeInfo || {};
             const identifiers: IndustryIdentifier[] = volumeInfo.industryIdentifiers || [];
 
@@ -62,7 +79,7 @@ export async function GET(req: NextRequest) {
                 title: volumeInfo.title || '',
                 authors: volumeInfo.authors || [],
                 description: volumeInfo.description || '',
-                pageCount: volumeInfo.pageCount || undefined,
+                pageCount: volumeInfo.pageCount ?? undefined,
                 printType: volumeInfo.printType || '',
                 categories: volumeInfo.categories || [],
                 publisher: volumeInfo.publisher || '',
@@ -84,12 +101,15 @@ export async function GET(req: NextRequest) {
         return new Response(JSON.stringify(response), { status: 200 });
     } catch (err) {
         console.error('Google Books API error:', err);
-        return new Response(JSON.stringify({ 
-            items: [], 
-            totalItems: 0, 
-            page, 
-            limit, 
-            totalPages: 0 
-        }), { status: 500 });
+        return new Response(
+            JSON.stringify({
+                items: [],
+                totalItems: 0,
+                page,
+                limit,
+                totalPages: 0,
+            }),
+            { status: 500 }
+        );
     }
 }
