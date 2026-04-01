@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 export default function RegisterPage() {
     const router = useRouter();
     const [form, setForm] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
     });
@@ -52,13 +53,30 @@ export default function RegisterPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label className="mb-2 block text-sm font-medium text-slate-700">
-                            Full name
+                            First Name
                         </label>
                         <input
                             type="text"
                             required
-                            value={form.name}
-                            onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                            value={form.firstName}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, firstName: e.target.value }))
+                            }
+                            className="w-full rounded-xl border border-slate-300 px-4 py-3"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700">
+                            Last Name
+                        </label>
+                        <input
+                            type="text"
+                            required
+                            value={form.lastName}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, lastName: e.target.value }))
+                            }
                             className="w-full rounded-xl border border-slate-300 px-4 py-3"
                         />
                     </div>

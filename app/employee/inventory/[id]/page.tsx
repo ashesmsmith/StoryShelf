@@ -7,7 +7,7 @@ export default async function EditBookPage({
     params,
     searchParams,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
     searchParams?: { duplicate?: string };
 }) {
     const { id } = await params;

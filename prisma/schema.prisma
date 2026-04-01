@@ -8,45 +8,73 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String
-  orders    Order[]
-  createdAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  email      String    @unique
+  password   String
+  role       String
+
+  orders     Order[]
+  addresses  Address[]
+
+  createdAt  DateTime  @default(now())
+
+  @@map("user")
+}
+
+model Address {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  firstName  String
+  lastName   String
+  street     String
+  city       String
+  state      String
+  zip        String
+  country    String
+  isDefault  Boolean @default(false)
+
+  user       User    @relation(fields: [userId], references: [id])
+  orders     Order[]
+
+  @@index([userId])
+  @@map("address")
 }
 
 model Book {
-  id          Int        @id @default(autoincrement())
-  isbn        String     @unique
-  title       String
-  author      String
-  description String?
-  imageURL    String?
-  price       Float
-  inventory   Inventory?
-  isFeatured  Boolean    @default(false)
-  slug        String?    @unique
+  id            Int        @id @default(autoincrement())
+  isbn          String     @unique
+  title         String
+  author        String
+  description   String?
+  imageURL      String?
+  price         Float
+  inventory     Inventory?
+  isFeatured    Boolean    @default(false)
+  slug          String?    @unique
 
-  pageCount    Int?      
-  printType    String?   
-  publisher    String?   
-  publishedDate DateTime? 
+  pageCount     Int?
+  printType     String?
+  publisher     String?
+  publishedDate DateTime?
 
-  categories  BookCategory[] // Many-to-many relation
-  orderItems  OrderItem[]   // Relation to OrderItem
+  categories    BookCategory[]
+  orderItems    OrderItem[]
 
   @@index([slug])
+  @@map("book")
 }
 
 model Inventory {
   id       Int  @id @default(autoincrement())
   bookId   Int  @unique
   quantity Int
+
   book     Book @relation(fields: [bookId], references: [id])
 
   @@index([bookId])
+  @@map("inventory")
 }
 
 model Category {
@@ -54,7 +82,9 @@ model Category {
   name  String
   slug  String @unique
 
-  books BookCategory[] // Many-to-many relation
+  books BookCategory[]
+
+  @@map("category")
 }
 
 model BookCategory {
@@ -67,31 +97,69 @@ model BookCategory {
   @@id([bookId, categoryId])
   @@index([bookId])
   @@index([categoryId])
+  @@map("book_category")
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
-  userId    Int
-  total     Float
-  status    String
-  createdAt DateTime    @default(now())
+  id           Int            @id @default(autoincrement())
+  userId       Int?
+  addressId    Int?
 
-  items     OrderItem[]
-  user      User        @relation(fields: [userId], references: [id])
+  // Pricing
+  subtotal     Float
+  tax          Float
+  shipping     Float
+  total        Float
+
+  // Status
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+
+  // Snapshot (preserves order history)
+  shippingFirstName String
+  shippingLastName  String
+  shippingStreet    String
+  shippingCity      String
+  shippingState     String
+  shippingZip       String
+  shippingCountry   String
+
+  createdAt    DateTime       @default(now())
+
+  items        OrderItem[]
+  user         User?          @relation(fields: [userId], references: [id])
+  address      Address?       @relation(fields: [addressId], references: [id])
 
   @@index([userId])
+  @@index([addressId])
+  @@map("order")
 }
 
 model OrderItem {
-  id       Int   @id @default(autoincrement())
-  orderId  Int
-  bookId   Int
-  quantity Int
-  price    Float
+  id        Int   @id @default(autoincrement())
+  orderId   Int
+  bookId    Int
+  quantity  Int
+  price     Float
 
-  order    Order @relation(fields: [orderId], references: [id])
-  book     Book  @relation(fields: [bookId], references: [id])
+  order     Order @relation(fields: [orderId], references: [id])
+  book      Book  @relation(fields: [bookId], references: [id])
 
   @@index([orderId])
   @@index([bookId])
+  @@map("order_item")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
 }
