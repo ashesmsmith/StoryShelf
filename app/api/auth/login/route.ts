@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         JSON.stringify({
             id: user.id,
             role: user.role,
-            name: user.name,
+            name: `${user.firstName} ${user.lastName}`,
         })
     );
 
