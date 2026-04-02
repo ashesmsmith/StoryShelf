@@ -9,7 +9,7 @@ export async function POST() {
 
         // Fetch cart order
         const cartOrder = await prisma.order.findFirst({
-            where: { userId, status: OrderStatus.CART },
+            where: { userId, status: OrderStatus.PENDING, paymentStatus: 'PENDING' },
         });
         if (!cartOrder) return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
 
