@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/app/lib/prisma';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import { hashPassword } from '@/app/lib/auth';
 
 export async function POST(req: Request) {
@@ -25,12 +25,12 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashed,
-        role: "customer",
+        role: "employee",
       },
     });
 
     return NextResponse.json(
-      { message: "Customer account created", user },
+      { message: "Employee account created", user },
       { status: 201 }
     );
   } catch {

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/app/lib/prisma';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import { comparePassword } from '@/app/lib/auth';
 
 export async function POST(req: Request) {
@@ -20,16 +20,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    if (user.role !== "customer") {
+    if (user.role !== "employee") {
       return NextResponse.json(
-        { error: "This login is for customers only" },
+        { error: "This login is for employees only" },
         { status: 403 }
       );
     }
 
     const response = NextResponse.json({
       message: "Login successful",
-      redirectTo: "/account",
+      redirectTo: "/dashboard",
     });
 
     response.cookies.set(

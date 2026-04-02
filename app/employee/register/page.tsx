@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-export default function RegisterPage() {
+export default function EmployeeRegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
@@ -22,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/employee/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,9 +37,9 @@ export default function RegisterPage() {
         return;
       }
 
-      setSuccess("Customer account created successfully.");
+      setSuccess("Employee account created successfully.");
       setTimeout(() => {
-        router.push("/login");
+        router.push("/employee/login");
       }, 1000);
     } catch {
       setError("Unexpected error while creating account.");
@@ -53,11 +53,11 @@ export default function RegisterPage() {
       <div className="mx-auto max-w-md">
         <div className="mb-8 text-center">
           <span className="inline-flex rounded-full border border-[#84A98C]/30 bg-[#84A98C]/20 px-4 py-2 text-sm font-semibold text-[#354f52]">
-            Customer Registration
+            Employee Registration
           </span>
-          <h1 className="mt-4 text-4xl font-bold">Create Account</h1>
+          <h1 className="mt-4 text-4xl font-bold">Create Employee Account</h1>
           <p className="mt-2 text-[#52796f]">
-            Register to shop, track orders, and manage your account.
+            Register an employee account for bookstore inventory access.
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function RegisterPage() {
                   setForm((prev) => ({ ...prev, name: e.target.value }))
                 }
                 className="w-full rounded-xl border border-[#cad2c5] px-4 py-3 outline-none transition focus:border-[#52796f]"
-                placeholder="Your full name"
+                placeholder="Employee full name"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function RegisterPage() {
                   setForm((prev) => ({ ...prev, email: e.target.value }))
                 }
                 className="w-full rounded-xl border border-[#cad2c5] px-4 py-3 outline-none transition focus:border-[#52796f]"
-                placeholder="you@example.com"
+                placeholder="employee@storyshelf.com"
               />
             </div>
 
@@ -134,9 +134,9 @@ export default function RegisterPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-[#52796f]">
-            Already have an account?{" "}
+            Already have an employee account?{" "}
             <Link
-              href="/login"
+              href="/employee/login"
               className="font-semibold text-[#354f52] hover:underline"
             >
               Sign in
