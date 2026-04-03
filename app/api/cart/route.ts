@@ -3,9 +3,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { recalcOrderTotals } from '@/lib/utils/order';
+import { getCurrentUser } from '@/lib/utils/getCurrentUser';
 import prisma from '@/lib/prisma';
-
-const USER_ID = 2; // Placeholder for authenticated user ID
 
 async function getOrCreateCartOrder(userId: number) {
     let order = await prisma.order.findFirst({
@@ -17,7 +16,7 @@ async function getOrCreateCartOrder(userId: number) {
             data: {
                 userId,
                 status: OrderStatus.PENDING,
-                paymentStatus: 'PENDING',
+                paymentStatus: PaymentStatus.PENDING,
                 subtotal: 0,
                 tax: 0,
                 shipping: 0,
@@ -40,7 +39,11 @@ async function getOrCreateCartOrder(userId: number) {
 
 export async function GET() {
     try {
-        const order = await getOrCreateCartOrder(USER_ID);
+        const user = await getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const order = await getOrCreateCartOrder(user.id);
         const items = await prisma.orderItem.findMany({
             where: { orderId: order.id },
             include: { book: true },
@@ -54,10 +57,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { bookId, quantity } = await req.json();
-        if (!bookId || typeof quantity !== 'number') return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
+        const user = await getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-        const order = await getOrCreateCartOrder(USER_ID);
+        const { bookId, quantity } = await req.json();
+        if (!bookId || typeof quantity !== 'number')
+            return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
+
+        const order = await getOrCreateCartOrder(user.id);
 
         const book = await prisma.book.findUnique({
             where: { id: bookId },

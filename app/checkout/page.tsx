@@ -78,7 +78,7 @@ export default function CheckoutPage() {
     const placeOrder = async () => {
         if (hasInvalidItems || cartItems.length === 0 || isFormIncomplete) return;
         if (placingOrder) return;
-        
+
         setPlacingOrder(true);
         setError(null);
 

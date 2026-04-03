@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { recalcOrderTotals } from '@/lib/utils/order';
+import { getCurrentUser } from '@/lib/utils/getCurrentUser';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
 
@@ -15,13 +16,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
     try {
-        const userId = 2; // Placeholder for authenticated user ID
+        const user = await getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         const form = await req.json();
 
         const { order, cartItems } = await prisma.$transaction(async (tx) => {
             const cartOrder = await tx.order.findFirst({
                 where: {
-                    userId,
+                    userId: user.id,
                     status: OrderStatus.PENDING,
                     paymentStatus: PaymentStatus.PENDING,
                 },
@@ -100,7 +104,7 @@ export async function POST(req: NextRequest) {
             mode: 'payment',
             success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/cancel`,
-            metadata: { orderId: order.id.toString() },
+            metadata: { orderId: order.id.toString(), userId: user.id.toString() },
         });
 
         return NextResponse.json({ url: session.url });
