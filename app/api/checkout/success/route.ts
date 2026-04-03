@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
 
         if (pendingOrder) {
             await prisma.orderItem.deleteMany({ where: { orderId: pendingOrder.id } });
-            await prisma.order.delete({ where: { id: pendingOrder.id } });
         }
 
         return NextResponse.json({ order });

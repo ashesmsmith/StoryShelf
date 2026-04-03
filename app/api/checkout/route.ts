@@ -31,6 +31,10 @@ export async function POST(req: NextRequest) {
                 throw new Error('Cart is Empty');
             }
 
+            if (cartOrder.status !== OrderStatus.PENDING) {
+                throw new Error('Order is processing...');
+            }
+
             const cartItems = await tx.orderItem.findMany({
                 where: { orderId: cartOrder.id },
                 include: { book: { include: { inventory: true } } },

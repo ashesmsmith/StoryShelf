@@ -39,6 +39,11 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ received: true });
             }
 
+            if (order.paymentStatus === PaymentStatus.PAID) {
+                console.log(`Order ID ${orderId} is already processed`);
+                return NextResponse.json({ received: true });
+            }
+
             const orderItems = await prisma.orderItem.findMany({
                 where: { orderId: order.id },
                 include: { book: { include: { inventory: true } } },
@@ -48,8 +53,8 @@ export async function POST(req: NextRequest) {
                 for (const item of orderItems) {
                     if (!item.book || !item.book.inventory) continue;
 
-                    await tx.inventory.update({
-                        where: { bookId: item.bookId },
+                    await tx.inventory.updateMany({
+                        where: { bookId: item.bookId, quantity: { gte: item.quantity } },
                         data: { quantity: { decrement: item.quantity } },
                     });
                 }

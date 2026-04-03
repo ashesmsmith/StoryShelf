@@ -55,7 +55,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const { bookId, quantity } = await req.json();
-        if (quantity < 0) return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
+        if (!bookId || typeof quantity !== 'number') return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
 
         const order = await getOrCreateCartOrder(USER_ID);
 
