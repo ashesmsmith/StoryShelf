@@ -1,7 +1,7 @@
-// IMPORTANT: Cart = status PENDING + paymentStatus PENDING
+// IMPORTANT: Cart = OrderStatus PENDING + PaymentStatus PENDING
 
 import { NextRequest, NextResponse } from 'next/server';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { recalcOrderTotals } from '@/lib/utils/order';
 import prisma from '@/lib/prisma';
 
@@ -9,7 +9,7 @@ const USER_ID = 2; // Placeholder for authenticated user ID
 
 async function getOrCreateCartOrder(userId: number) {
     let order = await prisma.order.findFirst({
-        where: { userId, status: OrderStatus.PENDING, paymentStatus: 'PENDING' },
+        where: { userId, status: OrderStatus.PENDING, paymentStatus: PaymentStatus.PENDING },
     });
 
     if (!order) {

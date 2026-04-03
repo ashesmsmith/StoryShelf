@@ -1,71 +1,94 @@
-import { NextResponse } from 'next/server';
+// IMPORTANT
+// Cart = OrderStatus PENDING + PaymentStatus PENDING
+// Checkout Order = OrderStatus PROCESSING + PaymentStatus PENDING
+// Paid Order = OrderStatus PROCESSING + PaymentStatus PAID
+
+import { NextRequest, NextResponse } from 'next/server';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { recalcOrderTotals } from '@/lib/utils/order';
 import prisma from '@/lib/prisma';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
     try {
-        const userId = 2; // authenticated user
+        const userId = 2; // Placeholder for authenticated user ID
 
-        // Fetch cart order
-        const cartOrder = await prisma.order.findFirst({
-            where: { userId, status: OrderStatus.PENDING, paymentStatus: 'PENDING' },
-        });
-        if (!cartOrder) return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+        const form = await req.json();
 
-        const cartItems = await prisma.orderItem.findMany({
-            where: { orderId: cartOrder.id },
-            include: { book: { include: { inventory: true } } },
-        });
-
-        if (!cartItems.length)
-            return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
-
-        // Check inventory
-        for (const item of cartItems) {
-            if (!item.book.inventory || item.quantity > item.book.inventory.quantity) {
-                return NextResponse.json(
-                    { error: `Not enough stock for ${item.book.title}` },
-                    { status: 400 }
-                );
-            }
-        }
-
-        // Recalculate totals
-        const totals = await recalcOrderTotals(cartOrder.id);
-
-        // Create finalized order
-        const shippingInfo = {
-            shippingFirstName: 'John',
-            shippingLastName: 'Doe',
-            shippingStreet: '123 Main St',
-            shippingCity: 'Los Angeles',
-            shippingState: 'CA',
-            shippingZip: '90001',
-            shippingCountry: 'USA',
-        };
-
-        const order = await prisma.order.update({
-            where: { id: cartOrder.id },
-            data: {
-                status: OrderStatus.PENDING,
-                paymentStatus: PaymentStatus.PENDING,
-                ...totals,
-                ...shippingInfo,
-            },
-        });
-
-        // Deduct inventory
-        for (const item of cartItems) {
-            await prisma.inventory.update({
-                where: { bookId: item.bookId },
-                data: { quantity: item.book.inventory!.quantity - item.quantity },
+        const result = await prisma.$transaction(async (tx) => {
+            const cartOrder = await tx.order.findFirst({
+                where: {
+                    userId,
+                    status: OrderStatus.PENDING,
+                    paymentStatus: PaymentStatus.PENDING,
+                },
             });
-        }
 
-        return NextResponse.json({ success: true, orderId: order.id });
+            if (!cartOrder) {
+                throw new Error('Cart is Empty');
+            }
+
+            const cartItems = await tx.orderItem.findMany({
+                where: { orderId: cartOrder.id },
+                include: { book: { include: { inventory: true } } },
+            });
+
+            if (!cartItems.length) {
+                throw new Error('Cart is Empty');
+            }
+
+            for (const item of cartItems) {
+                if (!item.book) {
+                    throw new Error(`One or more items in your cart are no longer available.`);
+                }
+
+                if (!item.book.inventory) {
+                    throw new Error(`Not enough stock for ${item.book.title}`);
+                }
+
+                if (item.price !== item.book.price) {
+                    throw new Error(`Price for ${item.book.title} has changed.`);
+                }
+
+                if (item.quantity > item.book.inventory.quantity) {
+                    throw new Error(`Not enough stock for ${item.book.title}`);
+                }
+            }
+
+            const totals = await recalcOrderTotals(cartOrder.id);
+
+            // Update OrderStatus to PROCESSING and save shipping info
+            const order = await tx.order.update({
+                where: { id: cartOrder.id },
+                data: {
+                    status: OrderStatus.PROCESSING,
+                    paymentStatus: PaymentStatus.PENDING,
+                    ...totals,
+                    shippingFirstName: form.firstName,
+                    shippingLastName: form.lastName,
+                    shippingStreet: form.street,
+                    shippingCity: form.city,
+                    shippingState: form.state,
+                    shippingZip: form.zip,
+                    shippingCountry: form.country,
+                },
+            });
+
+            for (const item of cartItems) {
+                await tx.inventory.update({
+                    where: { bookId: item.bookId },
+                    data: {
+                        quantity: { decrement: item.quantity },
+                    },
+                });
+            }
+
+            return order;
+        });
+
+        return NextResponse.json({ success: true, orderId: result.id });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: 'Checkout failed' }, { status: 500 });
+        const message = error instanceof Error ? error.message : 'Checkout failed';
+        return NextResponse.json({ error: message }, { status: 400 });
     }
 }
