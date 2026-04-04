@@ -51,3 +51,35 @@ Card declined: 4000 0000 0000 0002
 Insufficient funds: 4000 0000 0000 9995
 Incorrect CVC: 4000 0000 0000 0127
 Expired card: 4000 0000 0000 0069
+
+### **ORDER + PAYMENT STATUS GUIDE**
+
+### Cart (not checked out)
+
+OrderStatus = PENDING
+PaymentStatus = PENDING
+
+### Checkout started (Stripe session created)
+
+OrderStatus = PROCESSING
+PaymentStatus = PENDING
+
+### Payment successful
+
+OrderStatus = PROCESSING
+PaymentStatus = PAID
+
+### Order shipped
+
+OrderStatus = SHIPPED
+PaymentStatus = PAID
+
+### Order completed/delivered
+
+OrderStatus = COMPLETED
+PaymentStatus = PAID
+
+### Payment failed / order cancelled
+
+OrderStatus = CANCELLED
+PaymentStatus = FAILED

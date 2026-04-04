@@ -52,7 +52,7 @@ model Book {
   price         Float
   inventory     Inventory?
   isFeatured    Boolean    @default(false)
-  slug          String?    @unique
+  slug          String    @unique
 
   pageCount     Int?
   printType     String?

@@ -39,45 +39,44 @@ export default function BooksClient({ initialQuery }: { initialQuery?: string })
     };
 
     const importBook = async (book: any) => {
-    await fetch('/api/books/import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            isbn: book.isbn,
-            title: book.title,
-            authors: book.authors,
-            description: book.description,
-            imageURL: book.imageLinks?.thumbnail,
-            pageCount: book.pageCount,
-            printType: book.printType,
-            publisher: book.publisher,
-            publishedDate: book.publishedDate,
-            categories: book.categories,
-        }),
-    });
-};
+        await fetch('/api/books/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                isbn: book.isbn,
+                title: book.title,
+                authors: book.authors,
+                description: book.description,
+                imageURL: book.imageLinks?.thumbnail,
+                pageCount: book.pageCount,
+                printType: book.printType,
+                publisher: book.publisher,
+                publishedDate: book.publishedDate,
+                categories: book.categories,
+            }),
+        });
+    };
 
+    useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
 
-useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
-
-    const authors = [
-  "J.K. Rowling",
-  "C.S. Lewis",
-  "Roald Dahl",
-  "Dr. Seuss",
-  "Rick Riordan",
-  "Beatrix Potter",
-  "E.B. White",
-  "Lemony Snicket",
-  "Lewis Carroll",
-  "Michael Ende"
-];
-    const randomAuthor = authors[Math.floor(Math.random() * authors.length)];
-    console.log('Fetching books for initial query:', initialQuery );
-    fetchBooks(initialQuery || randomAuthor);
-}, [initialQuery]);
+        const authors = [
+            'J.K. Rowling',
+            'C.S. Lewis',
+            'Roald Dahl',
+            'Dr. Seuss',
+            'Rick Riordan',
+            'Beatrix Potter',
+            'E.B. White',
+            'Lemony Snicket',
+            'Lewis Carroll',
+            'Michael Ende',
+        ];
+        const randomAuthor = authors[Math.floor(Math.random() * authors.length)];
+        console.log('Fetching books for initial query:', initialQuery);
+        fetchBooks(initialQuery || randomAuthor);
+    }, [initialQuery]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -89,16 +88,11 @@ useEffect(() => {
             {/* HEADER */}
             <div className="mb-10">
                 <h1 className="text-3xl font-bold text-[#2f3e46]">Book Search</h1>
-                <p className="mt-2 text-[#52796f]">
-                    Search books by title, author, or ISBN.
-                </p>
+                <p className="mt-2 text-[#52796f]">Search books by title, author, or ISBN.</p>
             </div>
 
             {/* SEARCH */}
-            <form
-                onSubmit={handleSubmit}
-                className="mb-10 flex flex-col gap-3 sm:flex-row"
-            >
+            <form onSubmit={handleSubmit} className="mb-10 flex flex-col gap-3 sm:flex-row">
                 <input
                     type="text"
                     value={query}
@@ -116,9 +110,7 @@ useEffect(() => {
             </form>
 
             {/* STATES */}
-            {loading && (
-                <p className="text-[#52796f]">Searching books...</p>
-            )}
+            {loading && <p className="text-[#52796f]">Searching books...</p>}
 
             {!loading && searched && books.length === 0 && (
                 <p className="text-[#52796f]">No results found.</p>
@@ -142,17 +134,13 @@ useEffect(() => {
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <span className="text-[#52796f]">
-                                    No Image
-                                </span>
+                                <span className="text-[#52796f]">No Image</span>
                             )}
                         </div>
 
                         {/* CONTENT */}
                         <div className="p-5">
-                            <h3 className="text-lg font-semibold text-[#2f3e46]">
-                                {book.title}
-                            </h3>
+                            <h3 className="text-lg font-semibold text-[#2f3e46]">{book.title}</h3>
 
                             <p className="mt-1 text-sm text-[#52796f]">
                                 {book.authors?.join(', ') || 'Unknown author'}
@@ -165,7 +153,10 @@ useEffect(() => {
                             )}
 
                             <div className="mt-4">
-                                <button onClick={()=> importBook(book)} className="w-full rounded-xl bg-[#52796f] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
+                                <button
+                                    onClick={() => importBook(book)}
+                                    className="w-full rounded-xl bg-[#52796f] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+                                >
                                     Add to Cart
                                 </button>
                             </div>

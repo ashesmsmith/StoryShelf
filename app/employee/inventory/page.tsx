@@ -1,5 +1,4 @@
-// app/employee/inventory/page.tsx
-import prisma from '../../../lib/prisma';
+import prisma from '@/lib/prisma';
 import InventoryTable from './InventoryTable';
 import Link from 'next/link';
 

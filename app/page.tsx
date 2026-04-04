@@ -90,22 +90,22 @@ export default function Home() {
     const router = useRouter();
     const [search, setSearch] = useState('');
     const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const trimmed = search.trim();
+        const trimmed = search.trim();
 
-    if (!trimmed) return;
+        if (!trimmed) return;
 
-    router.push(`/books?search=${encodeURIComponent(trimmed)}`);
-};
+        router.push(`/books?search=${encodeURIComponent(trimmed)}`);
+    };
     const categoryStyles: Record<string, { icon: string; bg: string; hover: string }> = {
-    fiction: { icon: '📖', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#84A98C]' },
-    romance: { icon: '❤️', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#e5989b]' },
-    mystery: { icon: '🔍', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#577590]' },
-    fantasy: { icon: '🧙', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#6d597a]' },
-    'self-help': { icon: '💡', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#dda15e]' },
-    children: { icon: '🧸', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#90be6d]' },
-};
+        fiction: { icon: '📖', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#84A98C]' },
+        romance: { icon: '❤️', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#e5989b]' },
+        mystery: { icon: '🔍', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#577590]' },
+        fantasy: { icon: '🧙', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#6d597a]' },
+        'self-help': { icon: '💡', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#dda15e]' },
+        children: { icon: '🧸', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#90be6d]' },
+    };
 
     return (
         <main>

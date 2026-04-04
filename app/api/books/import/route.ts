@@ -19,10 +19,9 @@ export async function POST(req: NextRequest) {
         } = body;
 
         if (!isbn || !title) {
-            return new Response(
-                JSON.stringify({ error: 'ISBN and title are required' }),
-                { status: 400 }
-            );
+            return new Response(JSON.stringify({ error: 'ISBN and title are required' }), {
+                status: 400,
+            });
         }
 
         const existingBook = await prisma.book.findUnique({
@@ -113,9 +112,6 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error('IMPORT BOOK ERROR:', error);
 
-        return new Response(
-            JSON.stringify({ error: 'Internal server error' }),
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
     }
 }

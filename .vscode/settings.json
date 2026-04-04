@@ -1,3 +1,15 @@
 {
-    "dotnet.defaultSolution": "connectfour.slnx"
+    "dotnet.defaultSolution": "connectfour.slnx",
+    "cSpell.words": [
+        "Aldous",
+        "Cormac",
+        "Harari",
+        "Markus",
+        "Morgenstern",
+        "Sendak",
+        "Stephenie",
+        "Westover",
+        "Yuval",
+        "Zusak"
+    ]
 }

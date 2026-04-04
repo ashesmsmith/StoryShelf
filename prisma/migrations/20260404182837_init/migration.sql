@@ -43,7 +43,7 @@ CREATE TABLE "book" (
     "imageURL" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "isFeatured" BOOLEAN NOT NULL DEFAULT false,
-    "slug" TEXT,
+    "slug" TEXT NOT NULL,
     "pageCount" INTEGER,
     "printType" TEXT,
     "publisher" TEXT,
