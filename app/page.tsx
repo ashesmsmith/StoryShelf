@@ -1,3 +1,7 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -83,22 +87,44 @@ function getCategoryName(categoryId: number) {
 }
 
 export default function Home() {
+    const router = useRouter();
+    const [search, setSearch] = useState('');
+    const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const trimmed = search.trim();
+
+    if (!trimmed) return;
+
+    router.push(`/books?search=${encodeURIComponent(trimmed)}`);
+};
+    const categoryStyles: Record<string, { icon: string; bg: string; hover: string }> = {
+    fiction: { icon: '📖', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#84A98C]' },
+    romance: { icon: '❤️', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#e5989b]' },
+    mystery: { icon: '🔍', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#577590]' },
+    fantasy: { icon: '🧙', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#6d597a]' },
+    'self-help': { icon: '💡', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#dda15e]' },
+    children: { icon: '🧸', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#90be6d]' },
+};
+
     return (
         <main>
             <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 md:grid-cols-2 md:items-center md:py-20">
                 <div>
                     <span className="inline-flex rounded-full border border-[#84A98C]/30 bg-[#84A98C]/20 px-4 py-2 text-sm font-semibold text-[#354f52]">
-                        Inventory Tracking & E-Commerce
+                        Online Bookstore Experience
                     </span>
 
                     <h1 className="mt-6 max-w-xl text-4xl font-bold leading-tight md:text-6xl">
-                        Your bookstore,
-                        <span className="block text-[#52796f]">organized and online.</span>
+                        A world of books, one place.
+                        <span className="block text-[#52796f]">
+                            {' '}
+                            Explore stories that stay with you.
+                        </span>
                     </h1>
 
                     <p className="mt-6 max-w-xl text-lg leading-8 text-[#52796f]">
-                        Manage inventory, showcase books, and create a smooth shopping experience
-                        for customers in one modern platform.
+                        Discover stories you'll never forget.
                     </p>
 
                     <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -116,7 +142,7 @@ export default function Home() {
                         </Link>
                     </div>
 
-                    <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {/* <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div className="rounded-2xl border border-[#cad2c5] bg-white p-4 shadow-sm">
                             <p className="font-semibold text-[#2f3e46]">Structured Data</p>
                             <p className="mt-1 text-sm text-[#52796f]">
@@ -135,7 +161,7 @@ export default function Home() {
                                 Keep inventory synced with storefront
                             </p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="rounded-3xl border border-[#cad2c5] bg-white p-6 shadow-lg">
@@ -143,16 +169,17 @@ export default function Home() {
                         <p className="text-sm font-semibold text-[#354f52]">Quick Search</p>
 
                         <form
-                            action="/books"
-                            method="GET"
+                            onSubmit={handleSearch}
                             className="mt-4 flex flex-col gap-3 sm:flex-row"
                         >
                             <input
                                 type="text"
-                                name="search"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search by title, author, or ISBN"
                                 className="w-full rounded-xl border border-[#cad2c5] bg-white px-4 py-3 outline-none transition focus:border-[#52796f]"
                             />
+
                             <button
                                 type="submit"
                                 className="rounded-xl bg-[#52796f] px-5 py-3 font-semibold text-white transition hover:opacity-90"
@@ -162,7 +189,7 @@ export default function Home() {
                         </form>
                     </div>
 
-                    <div className="mt-5 rounded-2xl bg-[#2f3e46] p-6 text-white">
+                    {/* <div className="mt-5 rounded-2xl bg-[#2f3e46] p-6 text-white">
                         <h2 className="text-xl font-semibold">Structured Data Model</h2>
                         <ul className="mt-4 space-y-3 text-sm text-white/90">
                             <li>
@@ -177,7 +204,7 @@ export default function Home() {
                                 calculations and reporting.
                             </li>
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             </section>
 
@@ -187,10 +214,6 @@ export default function Home() {
                         Categories
                     </span>
                     <h2 className="mt-4 text-3xl font-bold">Explore by genre</h2>
-                    <p className="mt-2 text-[#52796f]">
-                        Each category can later come from the PostgreSQL table
-                        <span className="font-semibold"> categories</span>.
-                    </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
@@ -198,9 +221,21 @@ export default function Home() {
                         <Link
                             key={category.id}
                             href={`/books?category=${category.slug}`}
-                            className="rounded-2xl border border-[#cad2c5] bg-white px-4 py-6 text-center font-semibold shadow-sm transition hover:-translate-y-1 hover:bg-[#84A98C] hover:text-white"
+                            className={`group rounded-2xl border border-[#cad2c5] px-4 py-6 text-center shadow-sm transition-all duration-500 ease-out
+    ${categoryStyles[category.slug]?.bg}
+    ${categoryStyles[category.slug]?.hover}
+    hover:-translate-y-2 hover:text-white
+    opacity-0 translate-y-6 animate-fadeUp`}
+                            style={{
+                                animationDelay: `${category.id * 0.08}s`,
+                                animationFillMode: 'forwards',
+                            }}
                         >
-                            {category.name}
+                            <div className="text-3xl transition-transform duration-300 group-hover:scale-110">
+                                {categoryStyles[category.slug]?.icon}
+                            </div>
+
+                            <p className="mt-3 font-semibold">{category.name}</p>
                         </Link>
                     ))}
                 </div>
@@ -212,10 +247,6 @@ export default function Home() {
                         Featured Books
                     </span>
                     <h2 className="mt-4 text-3xl font-bold">Popular picks this week</h2>
-                    <p className="mt-2 text-[#52796f]">
-                        Mock data now, easy to replace later with data from
-                        <span className="font-semibold"> /api/books</span>.
-                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -279,17 +310,17 @@ export default function Home() {
                 </div>
             </section>
 
-            <section
+            {/* <section
                 id="about"
                 className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-8 md:grid-cols-3 md:py-14"
             >
-                <div className="rounded-3xl border border-[#cad2c5] bg-white p-6 shadow-sm">
+                <Link href="/books" className="block"><div className="rounded-3xl border border-[#cad2c5] bg-white p-6 shadow-sm">
                     <h3 className="text-xl font-semibold text-[#2f3e46]">Books</h3>
                     <p className="mt-3 leading-7 text-[#52796f]">
                         Main catalog table with title, author, price, stock, image and category
                         relation.
                     </p>
-                </div>
+                </div></Link>
 
                 <div className="rounded-3xl border border-[#cad2c5] bg-white p-6 shadow-sm">
                     <h3 className="text-xl font-semibold text-[#2f3e46]">Categories</h3>
@@ -304,7 +335,7 @@ export default function Home() {
                         Prepared for relational order flow with users, orders and order_items.
                     </p>
                 </div>
-            </section>
+            </section> */}
 
             <section className="mx-auto max-w-7xl px-6 py-8 md:py-14">
                 <div className="flex flex-col justify-between gap-6 rounded-3xl bg-gradient-to-r from-[#84A98C] to-[#52796f] p-8 text-white md:flex-row md:items-center">
@@ -313,10 +344,11 @@ export default function Home() {
                             Get Started
                         </span>
                         <h2 className="mt-4 text-3xl font-bold">
-                            Frontend aligned with PostgreSQL
+                            Your next great read is just a click away
                         </h2>
                         <p className="mt-2 max-w-2xl text-white/90">
-                            This structure is ready to evolve from local mock data to real API data.
+                            Browse our collection, discover new favorites, and build your personal
+                            library today.
                         </p>
                     </div>
 
