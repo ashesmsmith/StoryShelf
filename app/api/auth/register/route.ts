@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { hashPassword } from '@/app/lib/auth';
+import { hashPassword } from '@/lib/auth';
 
 export async function POST(req: Request) {
     try {

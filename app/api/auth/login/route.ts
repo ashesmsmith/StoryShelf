@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { comparePassword } from '@/app/lib/auth';
+import { comparePassword } from '@/lib/auth';
 
 export async function POST(req: Request) {
     try {

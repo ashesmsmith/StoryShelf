@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -31,48 +31,6 @@ const categories: Category[] = [
     { id: 6, name: 'Children', slug: 'children' },
 ];
 
-const featuredBooks: Book[] = [
-    {
-        id: 1,
-        title: 'The Silent Patient',
-        author: 'Alex Michaelides',
-        price: 18.99,
-        stockQuantity: 12,
-        categoryId: 3,
-        coverImageUrl: null,
-        isFeatured: true,
-    },
-    {
-        id: 2,
-        title: 'Atomic Habits',
-        author: 'James Clear',
-        price: 21.5,
-        stockQuantity: 8,
-        categoryId: 5,
-        coverImageUrl: null,
-        isFeatured: true,
-    },
-    {
-        id: 3,
-        title: 'The Midnight Library',
-        author: 'Matt Haig',
-        price: 19.25,
-        stockQuantity: 15,
-        categoryId: 1,
-        coverImageUrl: null,
-        isFeatured: true,
-    },
-    {
-        id: 4,
-        title: 'It Ends With Us',
-        author: 'Colleen Hoover',
-        price: 16.75,
-        stockQuantity: 6,
-        categoryId: 2,
-        coverImageUrl: null,
-        isFeatured: true,
-    },
-];
 
 function formatPrice(price: number) {
     return new Intl.NumberFormat('en-US', {
@@ -89,6 +47,10 @@ function getCategoryName(categoryId: number) {
 export default function Home() {
     const router = useRouter();
     const [search, setSearch] = useState('');
+    const [featuredBooks, setFeaturedBooks] = useState<any[]>([]);
+    const [loadingFeatured, setLoadingFeatured] = useState(true);  
+    
+    
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -106,6 +68,23 @@ export default function Home() {
         'self-help': { icon: '💡', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#dda15e]' },
         children: { icon: '🧸', bg: 'bg-[#f1f5f4]', hover: 'hover:bg-[#90be6d]' },
     };
+
+    useEffect(() => {
+  const fetchFeatured = async () => {
+    try {
+      const res = await fetch('/api/books/list?isFeatured=true&limit=4');
+      const data = await res.json();
+      setFeaturedBooks(data.items || []);
+    } catch (err) {
+      console.error('Error fetching featured books:', err);
+      setFeaturedBooks([]);
+    } finally {
+      setLoadingFeatured(false);
+    }
+  };
+
+  fetchFeatured();
+}, []);
 
     return (
         <main>
@@ -241,74 +220,79 @@ export default function Home() {
                 </div>
             </section>
 
-            <section id="featured" className="mx-auto max-w-7xl px-6 py-8 md:py-14">
-                <div className="mb-8">
-                    <span className="inline-flex rounded-full border border-[#84A98C]/30 bg-[#84A98C]/20 px-4 py-2 text-sm font-semibold text-[#354f52]">
-                        Featured Books
-                    </span>
-                    <h2 className="mt-4 text-3xl font-bold">Popular picks this week</h2>
-                </div>
+            {/* ==================== SECCIÓN FEATURED BOOKS (CON DATOS REALES) ==================== */}
+<section id="featured" className="mx-auto max-w-7xl px-6 py-8 md:py-14">
+  <div className="mb-8">
+    <span className="inline-flex rounded-full border border-[#84A98C]/30 bg-[#84A98C]/20 px-4 py-2 text-sm font-semibold text-[#354f52]">
+      Featured Books
+    </span>
+    <h2 className="mt-4 text-3xl font-bold">Popular picks this week</h2>
+    <p className="mt-2 text-[#52796f]">Descubre nuestras recomendaciones destacadas</p>
+  </div>
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                    {featuredBooks.map((book) => (
-                        <article
-                            key={book.id}
-                            className="overflow-hidden rounded-3xl border border-[#cad2c5] bg-white shadow-sm"
-                        >
-                            <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#84A98C] to-[#354F52] text-lg font-semibold text-white">
-                                {book.coverImageUrl ? (
-                                    <Image
-                                        src={book.coverImageUrl}
-                                        alt={book.title}
-                                        width={220}
-                                        height={220}
-                                        className="h-full w-full object-cover"
-                                    />
-                                ) : (
-                                    <span>Book Cover</span>
-                                )}
-                            </div>
+  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    {featuredBooks.map((book) => (
+      <article
+        key={book.id}
+        className="overflow-hidden rounded-3xl border border-[#cad2c5] bg-white shadow-sm transition hover:shadow-md"
+      >
+        <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#84A98C] to-[#354F52] text-lg font-semibold text-white overflow-hidden">
+          {book.imageURL || book.coverImageUrl ? (
+            <Image
+              src={book.imageURL || book.coverImageUrl || ''}
+              alt={book.title}
+              width={220}
+              height={220}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span>Book Cover</span>
+          )}
+        </div>
 
-                            <div className="p-5">
-                                <p className="text-sm font-medium text-[#52796f]">
-                                    {getCategoryName(book.categoryId)}
-                                </p>
+        <div className="p-5">
+          <p className="text-sm font-medium text-[#52796f]">
+            {book.categories?.[0]?.category?.name || 'General'}
+          </p>
 
-                                <h3 className="mt-1 text-xl font-semibold text-[#2f3e46]">
-                                    {book.title}
-                                </h3>
+          <h3 className="mt-1 text-xl font-semibold text-[#2f3e46] line-clamp-2">
+            {book.title}
+          </h3>
 
-                                <p className="mt-1 text-[#52796f]">{book.author}</p>
+          <p className="mt-1 text-[#52796f]">{book.author}</p>
 
-                                <div className="mt-3 flex items-center justify-between text-sm">
-                                    <span className="text-[#354f52]">
-                                        Stock: {book.stockQuantity}
-                                    </span>
-                                    <span
-                                        className={`rounded-full px-3 py-1 font-medium ${
-                                            book.stockQuantity > 0
-                                                ? 'bg-green-100 text-green-700'
-                                                : 'bg-red-100 text-red-700'
-                                        }`}
-                                    >
-                                        {book.stockQuantity > 0 ? 'Available' : 'Out of stock'}
-                                    </span>
-                                </div>
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="text-[#354f52]">
+              Stock: {book.inventory?.quantity ?? 0}
+            </span>
+            <span
+              className={`rounded-full px-3 py-1 font-medium ${
+                (book.inventory?.quantity ?? 0) > 0
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
+              }`}
+            >
+              {(book.inventory?.quantity ?? 0) > 0 ? 'Available' : 'Out of stock'}
+            </span>
+          </div>
 
-                                <div className="mt-5 flex items-center justify-between">
-                                    <span className="font-bold text-[#354f52]">
-                                        {formatPrice(book.price)}
-                                    </span>
+          <div className="mt-5 flex items-center justify-between">
+            <span className="font-bold text-[#354f52]">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              }).format(book.price)}
+            </span>
 
-                                    <button className="rounded-xl bg-[#2f3e46] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
-                                        Add to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-            </section>
+            <button className="rounded-xl bg-[#2f3e46] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
 
             {/* <section
                 id="about"
