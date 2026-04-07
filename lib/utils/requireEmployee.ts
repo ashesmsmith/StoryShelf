@@ -5,10 +5,10 @@ export async function requireEmployee() {
     const user = await getCurrentUser();
 
     if (!user) {
-        redirect('employee/login');
+        redirect('/employee/login');
     }
 
-    if (user.role !== 'EMPLOYEE') {
+    if (user.role !== 'employee') {
         redirect('/');
     }
 

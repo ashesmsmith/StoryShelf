@@ -36,7 +36,7 @@ export async function updateBook(formData: FormData) {
         )
     );
 
-    // Update book
+    // Update Book
     await prisma.book.update({
         where: { id },
         data: {
@@ -56,11 +56,12 @@ export async function updateBook(formData: FormData) {
         },
     });
 
-    // Update inventory
+    // Update Inventory
     await prisma.inventory.update({
         where: { bookId: id },
         data: { quantity: stockQuantity },
     });
 
-    redirect('/employee/inventory');
+    // Redirect to inventory after submission
+    redirect('/employee/dashboard/inventory');
 }

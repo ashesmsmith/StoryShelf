@@ -14,7 +14,7 @@ export async function createBook(formData: FormData) {
     // Check for existing book by ISBN before creating a new one
     const existingBook = await prisma.book.findUnique({ where: { isbn } });
     if (existingBook) {
-        redirect(`/employee/inventory/${existingBook.id}`);
+        redirect(`/employee/dashboard/inventory/${existingBook.id}`);
     }
 
     const title = String(formData.get('title') || '');
@@ -73,5 +73,5 @@ export async function createBook(formData: FormData) {
     });
 
     // Redirect to inventory after submission
-    redirect('/employee/inventory');
+    redirect('/employee/dashboard/inventory');
 }
