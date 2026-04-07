@@ -34,8 +34,7 @@ export default function EmployeeLoginPage() {
                 return;
             }
 
-            router.push('/dashboard');
-            router.refresh();
+            router.push('/employee/dashboard');
         } catch {
             setError('Unexpected error while signing in.');
         } finally {

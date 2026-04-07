@@ -7,7 +7,7 @@ export default async function EditBookPage({
     params,
     searchParams,
 }: {
-    params: Promise<{ id: string }>;
+    params: { id: string };
     searchParams?: { duplicate?: string };
 }) {
     const { id } = await params;
@@ -154,7 +154,10 @@ export default async function EditBookPage({
                         <button className="rounded-xl bg-[#2f3e46] px-6 py-3 text-white">
                             Save Changes
                         </button>
-                        <Link href="/employee/inventory" className="rounded-xl border px-6 py-3">
+                        <Link
+                            href="/employee/dashboard/inventory"
+                            className="rounded-xl border px-6 py-3"
+                        >
                             Cancel
                         </Link>
                     </div>
