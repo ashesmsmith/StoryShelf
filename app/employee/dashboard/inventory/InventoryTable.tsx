@@ -100,7 +100,10 @@ export default function InventoryTable({ initialBooks }: Props) {
                     type="text"
                     placeholder="Search by title or author..."
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                        setQuery(e.target.value);
+                        setPage(1);
+                    }}
                     className="w-full md:w-1/3 rounded-xl border border-[#cad2c5] px-4 py-2"
                 />
                 <button className="rounded-xl bg-[#2f3e46] px-6 py-2 text-white">Search</button>
@@ -195,7 +198,7 @@ export default function InventoryTable({ initialBooks }: Props) {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <Link
-                                                    href={`/employee/inventory/${book.id}`}
+                                                    href={`/employee/dashboard/inventory/${book.id}`}
                                                     className="rounded-lg bg-[#2f3e46] px-4 py-2 text-xs text-white"
                                                 >
                                                     Edit

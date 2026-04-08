@@ -96,8 +96,8 @@ export default async function EditBookPage({
                         className="rounded-xl border px-4 py-3"
                     >
                         <option value="">Select type</option>
-                        <option value="HARDCOVER">Hardcover</option>
-                        <option value="PAPERBACK">Paperback</option>
+                        <option value="Hardcover">Hardcover</option>
+                        <option value="Paperback">Paperback</option>
                     </select>
 
                     <label>Categories</label>

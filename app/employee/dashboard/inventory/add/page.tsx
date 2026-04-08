@@ -45,7 +45,7 @@ export default function AddBookPage() {
     // Fill form when user selects a book
     const handleSelectBook = (book: GoogleBook) => {
         setSelectedBook(book);
-        setSearchResults([]); // hide search results
+        setSearchResults([]);
     };
 
     // Format date for <input type="date">
@@ -57,13 +57,6 @@ export default function AddBookPage() {
               : '';
 
     const prefillCategories = selectedBook?.categories?.join(', ') || '';
-
-    const normalizedPrintType = (() => {
-        const pt = selectedBook?.printType?.toUpperCase() || '';
-        if (pt === 'HARDCOVER') return 'HARDCOVER';
-        if (pt === 'PAPERBACK') return 'PAPERBACK';
-        return '';
-    })();
 
     return (
         <main className="mx-auto max-w-3xl px-6 py-12">
@@ -155,12 +148,12 @@ export default function AddBookPage() {
                     <label>Print Type</label>
                     <select
                         name="printType"
-                        defaultValue={normalizedPrintType}
+                        defaultValue=""
                         className="rounded-xl border border-[#cad2c5] px-4 py-3"
                     >
                         <option value="">Select type</option>
-                        <option value="HARDCOVER">Hardcover</option>
-                        <option value="PAPERBACK">Paperback</option>
+                        <option value="Hardcover">Hardcover</option>
+                        <option value="Paperback">Paperback</option>
                     </select>
 
                     <label>Categories</label>
