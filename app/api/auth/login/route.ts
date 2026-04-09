@@ -52,7 +52,8 @@ export async function POST(req: Request) {
       'session',
       JSON.stringify({
         id: user.id,
-        name: user.firstName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
       }),
