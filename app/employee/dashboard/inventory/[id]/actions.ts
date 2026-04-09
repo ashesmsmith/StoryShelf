@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 export async function updateBook(formData: FormData) {
     const id = parseInt(formData.get('id') as string);
 
+    const imageURL = String(formData.get('imageURL') || '').trim();
     const title = String(formData.get('title') || '');
     const author = String(formData.get('author') || '');
     const description = String(formData.get('description') || '');
@@ -40,6 +41,7 @@ export async function updateBook(formData: FormData) {
     await prisma.book.update({
         where: { id },
         data: {
+            imageURL,
             title,
             author,
             description,

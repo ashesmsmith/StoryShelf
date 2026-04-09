@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { updateBook } from './actions';
+import BookImage from '@/components/BookImage';
 import Link from 'next/link';
 
 export default async function EditBookPage({
@@ -58,6 +59,28 @@ export default async function EditBookPage({
                         value={book.isbn}
                         disabled
                         className="rounded-xl border px-4 py-3 bg-gray-100"
+                    />
+
+                    {/* Book Image */}
+                    <div className="flex flex-col gap-2">
+                        <label>Current Book Cover</label>
+                        <BookImage
+                            src={book.imageURL || '/book_placeholder.png'}
+                            alt={book.title}
+                            width={128}
+                            height={192}
+                            className="rounded-xl border"
+                        />
+                    </div>
+
+                    {/* Image URL Input */}
+                    <label>Image URL</label>
+                    <input
+                        name="imageURL"
+                        type="text"
+                        defaultValue={book.imageURL || ''}
+                        placeholder="https://example.com/cover.jpg"
+                        className="rounded-xl border px-4 py-3"
                     />
 
                     <label>Title</label>

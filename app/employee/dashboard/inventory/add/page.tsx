@@ -77,20 +77,32 @@ export default function AddBookPage() {
                     {loading ? 'Searching...' : 'Search'}
                 </button>
 
-                {/* Search Results Dropdown */}
-                {searchResults.length > 0 && (
-                    <ul className="absolute top-full left-0 z-10 max-h-60 w-full overflow-auto rounded-xl border border-[#cad2c5] bg-white shadow-lg">
-                        {searchResults.map((book, index) => (
-                            <li
-                                key={index}
-                                className="cursor-pointer px-4 py-2 hover:bg-[#f0f4f3]"
-                                onClick={() => handleSelectBook(book)}
-                            >
-                                {book.title} {book.authors ? `- ${book.authors.join(', ')}` : ''}
-                            </li>
-                        ))}
-                    </ul>
-                )}
+            {/* Search Results Dropdown with thumbnails */}
+            {searchResults.length > 0 && (
+                <ul className="absolute top-full left-0 z-10 max-h-80 w-full overflow-auto rounded-xl border border-[#cad2c5] bg-white shadow-lg">
+                    {searchResults.map((book, index) => (
+                        <li
+                            key={index}
+                            className="flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-[#f0f4f3]"
+                            onClick={() => handleSelectBook(book)}
+                        >
+                            <BookImage
+                                src={book.imageLinks?.thumbnail || '/book_placeholder.png'}
+                                alt={book.title}
+                                width={40}
+                                height={60}
+                                className="rounded-md border"
+                            />
+                            <div className="flex flex-col">
+                                <span className="font-medium">{book.title}</span>
+                                {book.authors && (
+                                    <span className="text-sm text-gray-500">{book.authors.join(', ')}</span>
+                                )}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
             </form>
 
             {/* Book Cover */}
