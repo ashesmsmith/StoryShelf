@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { comparePassword } from '@/lib/auth';
+import { lazy } from 'react';
 
 export async function POST(req: Request) {
   try {
@@ -52,7 +53,8 @@ export async function POST(req: Request) {
       'session',
       JSON.stringify({
         id: user.id,
-        name: user.firstName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
       }),
