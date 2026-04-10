@@ -15,6 +15,12 @@ export default async function OrdersPage({
     searchParams?: { updated?: string };
 }) {
     const ordersRaw = await prisma.order.findMany({
+        where: {
+            NOT: {
+                status: 'PENDING',
+                paymentStatus: 'PENDING',
+            }
+        },
         include: { user: true },
         orderBy: { createdAt: 'desc' },
     });
