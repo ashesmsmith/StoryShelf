@@ -47,7 +47,7 @@ export default async function Header() {
                             Hi, {user.firstName}
                         </span>
 
-                        <form action="/api/auth/logout" method="POST">
+                        <form action="/" method="POST">
                             <button className="rounded-full border px-4 py-2 text-sm">
                                 Logout
                             </button>
