@@ -2,6 +2,8 @@
 
 ## Bookstore Inventory Tracking &amp; E-Commerce Platform
 
+https://storyshelf.vercel.app/
+
 ### **Contributors**
 
 Ashley Smith  
@@ -14,43 +16,27 @@ Provide a full-stack web application allowing bookstores to manage inventory usi
 
 ### **Features**
 
-- Role-based login for admin/employee/customer
-- Add books to inventory using ISBN barcode
-- Manual entry and editing options for book details
-- Inventory management options
-- Online storefront with checkout ability for customers
-- viewable Order History for customers
+- Role-based registration and login for employees and customers
+- Inventory Management (employees)
+-- Adding books to inventory using ISBN or title
+-- Stock and price management
+-- Book detail editing
+- Order Management (employees)
+-- Update order and payment statuses
+- Online Ordering (customers)
+-- Browse books in inventory
+-- Cart and checkout features
+- Order History (customers)
+-- At a glance and details
 
 ### **Technology**
 
-Frontend: Next.js, CSS
+Frontend: Next.js, CSS, Tailwind
 Backend: Next.js API Routes
 Database: PostgreSQL  
 Deployment: Vercel  
 Version Control: GitHub
 External APIs: Google Books API
-
-### **Favorite Quotes**
-
-"I am no man." - Eowyn (Lord of the Rings)
-
-"It's no use going back to yesterday because I was a different person then." — Alice (Alice's Adventures in Wonderland)
-
-"Be Ye Men of Valour" - Winston Churchill
-
-### **Payment Info for Testing**
-
-Basic Test Card - This simulates a successful payment.
-Card number: 4242 4242 4242 4242
-Expiry: any future date, e.g., 12/34
-CVC: any 3 digits, e.g., 123
-ZIP: any 5 digits, e.g., 12345
-
-Other Useful Test Scenarios
-Card declined: 4000 0000 0000 0002
-Insufficient funds: 4000 0000 0000 9995
-Incorrect CVC: 4000 0000 0000 0127
-Expired card: 4000 0000 0000 0069
 
 ### **ORDER + PAYMENT STATUS GUIDE**
 
@@ -83,3 +69,11 @@ PaymentStatus = PAID
 
 OrderStatus = CANCELLED
 PaymentStatus = FAILED
+
+### **Contributors Favorite Quotes**
+
+"I am no man." - Eowyn (Lord of the Rings)
+
+"It's no use going back to yesterday because I was a different person then." — Alice (Alice's Adventures in Wonderland)
+
+"Be Ye Men of Valour" - Winston Churchill
